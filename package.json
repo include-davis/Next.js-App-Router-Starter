@@ -6,12 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "init": "run-script-os",
+    "init:nix": "node --env-file='.env' \"app/(api)/_utils/dbInit.js\"",
+    "init:windows": "node --env-file='.env' \".\\app\\(api)\\_utils\\dbInit.js\""
   },
   "dependencies": {
+    "mongodb": "^6.3.0",
+    "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.0.4",
     "react-icons": "^4.11.0",
     "sass": "^1.69.5"
   },
@@ -20,7 +24,7 @@
     "eslint-config-next": "14.0.4",
     "eslint-plugin-lit-a11y": "^1.1.0-next.1",
     "eslint-plugin-prettier": "^5.0.1",
-    "prettier": "3.0.3"
+    "prettier": "3.0.3",
+    "run-script-os": "^1.1.6"
   }
 }
-  

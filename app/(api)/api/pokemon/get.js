@@ -1,15 +1,14 @@
 import { NextResponse } from 'next/server';
 
-import dbConnect from '@utils/mongoClient';
+import dbConnect from '@utils/db/mongoClient';
+import getQueries from '@utils/request/getQueries';
 
 export async function GET(request) {
   try {
-    const client = await dbConnect();
-    const db = client.db();
+    const queries = getQueries(request);
+    const db = await dbConnect();
 
-    const playlist = await db.collection('playlists').find({
-      name: 'my first playlist',
-    });
+    const playlist = await db.collection('pokemon').find(queries).toArray();
 
     return NextResponse.json({ ok: true, body: playlist }, { status: 200 });
   } catch (error) {

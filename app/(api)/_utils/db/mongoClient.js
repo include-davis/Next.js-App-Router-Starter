@@ -1,15 +1,17 @@
 const { MongoClient } = require('mongodb');
 
 const uri = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_DB_HOST}`;
-let cachedClient = null;
+let db = null;
 
 async function dbConnect() {
-  if (cachedClient) {
-    return cachedClient;
+  if (db) {
+    console.log('Cache Hit!');
+    return db;
   }
   const client = new MongoClient(uri);
-  cachedClient = client;
-  return client;
+  db = client.db();
+  console.log('Cache Miss :(');
+  return db;
 }
 
 module.exports = dbConnect;

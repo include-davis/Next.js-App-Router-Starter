@@ -87,6 +87,7 @@ To create groupings of files without affecting the routes, you can wrap your fol
 - https://nextjs.org/docs/app/building-your-application/routing/defining-routes
 - https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts
 - https://nextjs.org/docs/app/building-your-application/routing/route-groups
+- https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes
 
 ## Layouts
 Next.js 13+ also added in the super useful tool called layouts. Layouts essentially wrap around your pages to provide the same "layout" to each page that the layout applies to. An example is having a Navbar and Footer that are shared by every page of the app. Rather than defining the Navbar and Footer in each page, you can add it to the root layout and have the layout apply to each page by writing the code once.
@@ -127,3 +128,17 @@ We will be using SCSS since it just provides more options for how to format our 
 ### Resources
 - https://create-react-app.dev/docs/adding-a-css-modules-stylesheet/
 
+## Serverless Functions
+To create your API from serverless functions, go to the `(api)` folder which contains a file structure similar to the `(pages)` folder. Instead of having `_components` and `_hooks`, the `(api)` folder only has the `_utils` folder which will be used to define global utility functions. I defined three folders: `db`, `request`, and `response`. These are designed such that all database related utility functions are defined in `db`, request processing related functions will be in `request`, and response related utility such as custom Errors are defined in `reponse`.
+
+If you see a case where some utility only applies to a certain set of endpoints, feel free to create local `_utils` folders using the same logic as before for local `_components` and `_hooks`.
+
+You'll see that there are folders defined with square brackets around the name such as `[id]`. These are dynamic routes and they work on the frontend as well. 
+
+**Resources**
+- https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes
+- https://restfulapi.net/http-methods/
+- https://medium.com/@nadinCodeHat/rest-api-naming-conventions-and-best-practices-1c4e781eb6a5
+
+**Note**
+If your app only has a frontend, feel free to delete the `(api)` folder. 

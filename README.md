@@ -63,15 +63,15 @@ Inside MongoDB Compass, connect to the client and create a new database using th
 You will also need to create a user that has a username, password, and dbOwnership role using the mongo shell (mongosh). To enter your mongo shell, type `mongosh` into your terminal.
 To switch to your newly created database:
 ```bash
-use DBNAME
+use <DBNAME>
 ```
-Replace `DBNAME` with the actual name of your database.
+Replace `<DBNAME>` with the actual name of your database. (remove the angle brackets, they're just there for me to show that this is replaceable)
 
 Then, to create a user that has ownership of the database:
 ```js
 db.createUser({
-   user: "USERNAME",
-   pwd: "PASSWORD",
+   user: "<USERNAME>",
+   pwd: "<PASSWORD>",
    roles: ['dbOwner']
 })
 ```

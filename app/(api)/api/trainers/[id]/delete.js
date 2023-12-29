@@ -13,7 +13,6 @@ export async function DELETE(_, { params }) {
       _id: id,
     });
 
-    await client.close();
     return NextResponse.json({ ok: true, body: trainer }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

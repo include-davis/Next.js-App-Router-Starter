@@ -1,4 +1,5 @@
 # Some Notes Before You Begin
+**Switch to the template/mongodb branch if you aren't branching off this repo using the repo as a template**
 Make sure you follow all of the steps in "Setting Up Your Development Environment" before attempting to even look at the code. 
 
 Also, read through the docs linked under the "Contributing to the Codebase" section so you can get a feel for the tools and syntax we will be going through.

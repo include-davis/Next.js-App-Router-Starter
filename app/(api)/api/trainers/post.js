@@ -10,7 +10,6 @@ export async function POST(request) {
 
     const trainer = await db.collection('trainers').insertOne(body);
 
-    await client.close();
     return NextResponse.json({ ok: true, body: trainer }, { status: 201 });
   } catch (error) {
     return NextResponse.json(

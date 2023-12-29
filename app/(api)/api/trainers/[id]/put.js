@@ -21,7 +21,6 @@ export async function PUT(request, { params }) {
       throw Error(`Playlist with id: ${params.id} not found.`);
     }
 
-    await client.close();
     return NextResponse.json({ ok: true, body: trainer }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

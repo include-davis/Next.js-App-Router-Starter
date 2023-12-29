@@ -13,7 +13,6 @@ export async function POST(request) {
 
     const playlist = await db.collection('pokemon').insertOne(body);
 
-    await client.close();
     return NextResponse.json({ ok: true, body: playlist }, { status: 201 });
   } catch (error) {
     return NextResponse.json(

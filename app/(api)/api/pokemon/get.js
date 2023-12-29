@@ -11,7 +11,6 @@ export async function GET(request) {
 
     const playlist = await db.collection('pokemon').find(queries).toArray();
 
-    await client.close();
     return NextResponse.json({ ok: true, body: playlist }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

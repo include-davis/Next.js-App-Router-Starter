@@ -8,10 +8,12 @@ export async function POST(request) {
     const body = await request.json();
     body.trainer_id = new ObjectId(body.trainer_id);
 
-    const db = await dbConnect();
+    const client = await dbConnect();
+    const db = client.db();
 
     const playlist = await db.collection('pokemon').insertOne(body);
 
+    await client.close();
     return NextResponse.json({ ok: true, body: playlist }, { status: 201 });
   } catch (error) {
     return NextResponse.json(

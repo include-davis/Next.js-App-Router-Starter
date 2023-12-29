@@ -6,12 +6,14 @@ import dbConnect from '@utils/db/mongoClient';
 export async function DELETE(_, { params }) {
   try {
     const id = new ObjectId(params.id);
-    const db = await dbConnect();
+    const client = await dbConnect();
+    const db = client.db();
 
     const trainer = await db.collection('trainers').deleteOne({
       _id: id,
     });
 
+    await client.close();
     return NextResponse.json({ ok: true, body: trainer }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

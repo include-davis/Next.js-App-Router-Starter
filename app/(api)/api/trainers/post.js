@@ -5,10 +5,12 @@ import dbConnect from '@utils/db/mongoClient';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const db = await dbConnect();
+    const client = await dbConnect();
+    const db = client.db();
 
     const trainer = await db.collection('trainers').insertOne(body);
 
+    await client.close();
     return NextResponse.json({ ok: true, body: trainer }, { status: 201 });
   } catch (error) {
     return NextResponse.json(

@@ -7,7 +7,8 @@ export async function PUT(request, { params }) {
   try {
     const body = await request.json();
     const id = new ObjectId(params.id);
-    const db = await dbConnect();
+    const client = await dbConnect();
+    const db = client.db();
 
     const pokemon = await db.collection('pokemon').updateOne(
       {
@@ -20,6 +21,7 @@ export async function PUT(request, { params }) {
       throw Error(`Playlist with id: ${params.id} not found.`);
     }
 
+    await client.close();
     return NextResponse.json({ ok: true, body: pokemon }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

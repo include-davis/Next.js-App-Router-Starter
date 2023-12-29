@@ -6,7 +6,8 @@ import dbConnect from '@utils/db/mongoClient';
 export async function GET(_, { params }) {
   try {
     const id = new ObjectId(params.id);
-    const db = await dbConnect();
+    const client = await dbConnect();
+    const db = client.db();
 
     const pokemon = await db.collection('pokemon').findOne({
       _id: id,
@@ -16,6 +17,7 @@ export async function GET(_, { params }) {
       throw Error(`Pokemon with id: ${params.id} not found.`);
     }
 
+    await client.close();
     return NextResponse.json({ ok: true, body: pokemon }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

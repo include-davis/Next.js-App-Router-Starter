@@ -6,10 +6,12 @@ import getQueries from '@utils/request/getQueries';
 export async function GET(request) {
   try {
     const queries = getQueries(request);
-    const db = await dbConnect();
+    const client = await dbConnect();
+    const db = client.db();
 
     const playlist = await db.collection('pokemon').find(queries).toArray();
 
+    await client.close();
     return NextResponse.json({ ok: true, body: playlist }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

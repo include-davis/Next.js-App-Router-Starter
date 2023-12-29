@@ -7,7 +7,8 @@ import NotFoundError from '@utils/response/NotFoundError';
 export async function DELETE(_, { params }) {
   try {
     const id = new ObjectId(params.id);
-    const db = await dbConnect();
+    const client = await dbConnect();
+    const db = client.db();
 
     const deleteStatus = await db.collection('pokemon').deleteOne({
       _id: id,
@@ -17,6 +18,7 @@ export async function DELETE(_, { params }) {
       throw new NotFoundError(`pokemon with id: ${params.id} not found.`);
     }
 
+    await client.close();
     return NextResponse.json({ ok: true, body: pokemon }, { status: 200 });
   } catch (error) {
     return NextResponse.json(

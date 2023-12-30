@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import dbConnect from '@utils/db/mongoClient';
+import dbConnect from '@utils/mongodb/mongoClient';
 
 export async function POST(request) {
   try {

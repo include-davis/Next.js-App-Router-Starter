@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 
-import dbConnect from '@utils/db/mongoClient';
+import dbConnect from '@utils/mongodb/mongoClient';
 
 export async function GET(_, { params }) {
   try {

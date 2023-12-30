@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 
-import dbConnect from '@utils/db/mongoClient';
+import dbConnect from '@utils/mongodb/mongoClient';
+import expandIds from '@utils/mongodb/expandIds';
 
 export async function PUT(request, { params }) {
   try {
@@ -10,29 +11,13 @@ export async function PUT(request, { params }) {
     const client = await dbConnect();
     const db = client.db();
 
-    // if trying to append to pokemon
-    if (body?.$push?.pokemon || body?.addToSet?.pokemon) {
-      // transform all raw ids into ObjectIDs
-      const pokemon_id_list = body.$push.pokemon.$each.map(
-        (id) => new ObjectId(id)
-      );
-
-      // get list of pokemon data from ids
-      const pokemon_list = await db
-        .collection('pokemon')
-        .find({
-          _id: { $in: pokemon_id_list },
-        })
-        .toArray();
-
-      body.$push.pokemon.$each = pokemon_list;
-    }
+    const expandedBody = await expandIds(body);
 
     const trainer = await db.collection('trainers').updateOne(
       {
         _id: id,
       },
-      body
+      expandedBody
     );
 
     if (trainer === null) {

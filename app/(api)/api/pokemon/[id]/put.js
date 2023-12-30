@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 
-import dbConnect from '@utils/db/mongoClient';
-import { nestAllUpdaters } from '@utils/db/nestFields';
+import dbConnect from '@utils/mongodb/mongoClient';
+import { prependAllAttributes } from '@utils/mongodb/prependAttributes';
+import NotFoundError from '@utils/response/NotFoundError';
 
 export async function PUT(request, { params }) {
   try {
@@ -18,17 +19,15 @@ export async function PUT(request, { params }) {
       body
     );
 
-    // nestAllUpdaters transforms our request body mongodb syntax such that it
-    // updates the subdocuments within our trainer object rather than the trainer obj itself
-    // This was written by me so it might not always work
+    const subDocumentUpdate = prependAllAttributes(body, 'pokemon.$[pokemon].');
     const trainer_pokemon = await db
       .collection('trainers')
-      .updateMany({}, nestAllUpdaters(body, 'pokemon.$[pokemon].'), {
+      .updateMany({}, subDocumentUpdate, {
         arrayFilters: [{ 'pokemon._id': id }],
       });
 
-    if (pokemon === null) {
-      throw Error(`Pokemon with id: ${params.id} not found.`);
+    if (pokemon.matchedCount === 0) {
+      throw new NotFoundError(`Pokemon with id: ${params.id} not found.`);
     }
 
     return NextResponse.json(

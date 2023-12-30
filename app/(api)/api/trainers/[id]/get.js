@@ -10,15 +10,9 @@ export async function GET(_, { params }) {
     const db = client.db();
 
     const trainer = await db.collection('trainers').findOne({ _id: id });
-    const pokemon = await db
-      .collection('pokemon')
-      .find({ trainer_id: id })
-      .project({ trainer_id: 0 })
-      .toArray();
-    trainer.pokemon = pokemon;
 
     if (trainer === null) {
-      throw Error(`Pokemon with id: ${params.id} not found.`);
+      throw Error(`Trainer with id: ${params.id} not found.`);
     }
 
     return NextResponse.json({ ok: true, body: trainer }, { status: 200 });

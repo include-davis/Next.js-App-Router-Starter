@@ -3,8 +3,8 @@ import { ObjectId } from 'mongodb';
 
 import { getDatabase } from '@utils/mongodb/mongoClient';
 import isBodyEmpty from '@utils/request/isBodyEmpty';
-import NoContentError from '@utils/response/NoContentError';
 import parseAndReplace from '@utils/request/parseAndReplace';
+import NoContentError from '@utils/response/NoContentError';
 
 export async function POST(request) {
   try {

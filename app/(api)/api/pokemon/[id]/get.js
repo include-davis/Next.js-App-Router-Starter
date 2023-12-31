@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 
 import { getDatabase } from '@utils/mongodb/mongoClient';
+import NotFoundError from '@utils/response/NotFoundError';
 
 export async function GET(_, { params }) {
   try {
@@ -13,14 +14,14 @@ export async function GET(_, { params }) {
     });
 
     if (pokemon === null) {
-      throw Error(`Pokemon with id: ${params.id} not found.`);
+      throw new NotFoundError(`Pokemon with id: ${params.id} not found.`);
     }
 
     return NextResponse.json({ ok: true, body: pokemon }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { ok: false, error: error.message },
-      { status: 400 }
+      { status: error.status || 400 }
     );
   }
 }

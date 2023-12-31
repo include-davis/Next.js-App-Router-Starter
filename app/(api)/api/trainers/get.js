@@ -8,13 +8,13 @@ export async function GET(request) {
     const queries = getQueries(request);
     const db = await getDatabase();
 
-    const trainer = await db.collection('trainers').find(queries).toArray();
+    const trainers = await db.collection('trainers').find(queries).toArray();
 
-    return NextResponse.json({ ok: true, body: trainer }, { status: 200 });
+    return NextResponse.json({ ok: true, body: trainers }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { ok: false, error: error.message },
-      { status: 400 }
+      { status: error.status || 400 }
     );
   }
 }

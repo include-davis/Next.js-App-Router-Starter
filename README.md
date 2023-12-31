@@ -186,3 +186,89 @@ You'll see that there are folders defined with square brackets around the name s
 
 **Note**
 If your app only has a frontend, feel free to delete the `(api)` folder. 
+
+## MongoDB
+MongoDB is our database and in order to use it to create an easy to use REST api, I defined a couple of helper functions that you may use for your projects. Before I get into those, I'll link a few resources for you to read up on for CRUD with MongoDB. To be honest, these may not be the best resources, but they are a place to start. 
+
+Take looks at embeddings, relations, crud, and aggregations please. Like always, if you are reading through docs and find terms you don't know, look them up so you can truly understand what's going on. If you do this for long enough, you'll build up an internal database of knowledge that carries into future projects, thus saving time!
+
+**resources**
+- https://www.mongodb.com/docs/manual/applications/data-models-relationships/
+- https://www.mongodb.com/docs/manual/crud/
+- https://www.mongodb.com/docs/drivers/node/current/fundamentals/aggregation/
+
+### Helper Functions
+By now, I hope you have an understanding of the general syntax of crud operations. The main priority of writing the API is to keep the API simple to use. A secondary concern is making the logic behind the scenes (inside the serverless fucntions) easy to write as well. To solve both issues, I created some helper functions that mainly serve to manipulate JSON objects.
+
+To see how these helper functions were written, refer to the definitions within the `_utils/response` folder. If there are any bugs, please let me know ASAP so I can fix them, or even better, fix them and make a pull request.
+
+#### getQueries(request: NextRequest)
+getQueries is a helper function that I made to take request queries like `http://localhost:3000/api/trainers?<queries>` and converts them into a JSON object. This allows you to directly feed the query into some of mongoDB's query inputs.
+
+#### isBodyEmpty(obj: Object)
+Just a simple way to check if a JSON object is empty `{}`. If our request body is empty, we should throw a NoContentError.
+
+#### prependAllAttributes(obj: Object, prefix, String)
+prependAllAttributes takes a JSON object and renames all fields that are two levels deep by adding the prefix to their names.
+
+Example Input: 
+```json
+{
+   "$set": {
+      "name": "austin",
+      "age": 20
+   },
+   "$push": {
+      "classes": ["physics", "chem"]
+   }
+}
+```
+
+Example Output where `prefix = PREFIX`:
+```json
+{
+   "$set": {
+      "PREFIXname": "austin",
+      "PREFIXage": 20
+   },
+   "$push": {
+      "PREFIXclasses": ["physics", "chem"]
+   }
+}
+```
+
+This function is mainly used when you have embeddings, such as pokemon embedded within a trainer object. When you update a pokemon from the pokemon collection, you also have to update all copies of that pokemon that is stored in an embedding inside trainer objects. In order to access subdocuments within an object, you often have to refer to fields with `dot .` notation or `array []` notation as prefixes to the actual field name.
+
+#### parseAndReplace(obj: Object)
+This function recursively searches through a JSON object for certain keywords: "*convertIds", "*convertId", "*expandIds", "*expandId". **Note**: remember to add in the `*` or else the function won't recognize the keywords. After finding objects with one of these keywords as fields, it will replace the entire object with the return value of a specified operation.
+
+***convertIds**:
+convertIds takes in a list of raw ObjectId strings and typecasts them into ObjectIds. This is useful since the caller of the api can only pass in ObjectIds as strings, but they need to be casted to ObjecctIds. Rather than manually defining these typeCasts within each serverless function, we can define the typeCasting within the API call itself.
+
+Everytime an object appears like so, it will be replaced with a list of ObjectIds.  
+Before:
+```JSON
+{
+   "*convertIds": {
+     "ids": ["658f94018dac260ae7b17fce", "658f940e8dac260ae7b17fd0"],
+   }
+}
+```
+After:
+```js
+[ObjectId("658f94018dac260ae7b17fce"), ObjectId("658f940e8dac260ae7b17fd0")]
+```
+
+There is also ***convertId**  
+Before:
+```json
+{
+   "*convertId": {
+     "id": "658f94018dac260ae7b17fce",
+   }
+}
+```  
+After:
+```js
+ObjectId("658f94018dac260ae7b17fce")
+```

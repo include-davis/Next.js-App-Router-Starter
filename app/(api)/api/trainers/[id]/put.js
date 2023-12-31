@@ -14,14 +14,14 @@ export async function PUT(request, { params }) {
     if (isBodyEmpty(body)) {
       throw new NoContentError();
     }
-    const preparedUpdater = await parseAndReplace(body);
+    const parsedUpdater = await parseAndReplace(body);
 
     const db = await getDatabase();
     const trainer = await db.collection('trainers').updateOne(
       {
         _id: id,
       },
-      preparedUpdater
+      parsedUpdater
     );
 
     if (trainer.matchedCount === 0) {

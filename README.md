@@ -197,18 +197,18 @@ Take looks at embeddings, relations, crud, and aggregations please. Like always,
 - https://www.mongodb.com/docs/manual/crud/
 - https://www.mongodb.com/docs/drivers/node/current/fundamentals/aggregation/
 
-### Helper Functions
+## Helper Functions
 By now, I hope you have an understanding of the general syntax of crud operations. The main priority of writing the API is to keep the API simple to use. A secondary concern is making the logic behind the scenes (inside the serverless fucntions) easy to write as well. To solve both issues, I created some helper functions that mainly serve to manipulate JSON objects.
 
 To see how these helper functions were written, refer to the definitions within the `_utils/response` folder. If there are any bugs, please let me know ASAP so I can fix them, or even better, fix them and make a pull request.
 
-#### getQueries(request: NextRequest)
+### getQueries(request: NextRequest)
 getQueries is a helper function that I made to take request queries like `http://localhost:3000/api/trainers?<queries>` and converts them into a JSON object. This allows you to directly feed the query into some of mongoDB's query inputs.
 
-#### isBodyEmpty(obj: Object)
+### isBodyEmpty(obj: Object)
 Just a simple way to check if a JSON object is empty `{}`. If our request body is empty, we should throw a NoContentError.
 
-#### prependAllAttributes(obj: Object, prefix, String)
+### prependAllAttributes(obj: Object, prefix, String)
 prependAllAttributes takes a JSON object and renames all fields that are two levels deep by adding the prefix to their names.
 
 Example Input: 
@@ -239,10 +239,46 @@ Example Output where `prefix = PREFIX`:
 
 This function is mainly used when you have embeddings, such as pokemon embedded within a trainer object. When you update a pokemon from the pokemon collection, you also have to update all copies of that pokemon that is stored in an embedding inside trainer objects. In order to access subdocuments within an object, you often have to refer to fields with `dot .` notation or `array []` notation as prefixes to the actual field name.
 
-#### parseAndReplace(obj: Object)
+### parseAndReplace(obj: Object)
 This function recursively searches through a JSON object for certain keywords: "*convertIds", "*convertId", "*expandIds", "*expandId". **Note**: remember to add in the `*` or else the function won't recognize the keywords. After finding objects with one of these keywords as fields, it will replace the entire object with the return value of a specified operation.
 
-***convertIds**:
+Example full input:
+```JSON
+{
+   "name": "ash",
+   "age": 20,
+   "pokemon": {
+      "*expandIds": {
+        "ids": ["65915e9052657d4814a173c4", "65915e9f52657d4814a173c7"],
+        "from": "pokemon"
+      }
+   }
+}
+```
+
+Example output:
+```JSON
+{
+   "name": "ash",
+   "age": 20,
+   "pokemon": [
+       {
+           "_id": "65915e9052657d4814a173c4",
+           "name": "vaporeon",
+           "happiness": 100
+       },
+       {
+           "_id": "65915e9f52657d4814a173c7",
+           "name": "squirtle",
+           "happiness": 100
+       }
+   ]
+}
+```
+
+Before the API call is made, by calling parseAndReplace() on the incoming object, we could first convert the raw ObjectIds into pokemon documents to pass into our trainer object. If we didn't do this, the best we could input to our trainer creation command would be the raw ids.
+
+***convertIds**:  
 convertIds takes in a list of raw ObjectId strings and typecasts them into ObjectIds. This is useful since the caller of the api can only pass in ObjectIds as strings, but they need to be casted to ObjecctIds. Rather than manually defining these typeCasts within each serverless function, we can define the typeCasting within the API call itself.
 
 Everytime an object appears like so, it will be replaced with a list of ObjectIds.  
@@ -259,7 +295,7 @@ After:
 [ObjectId("658f94018dac260ae7b17fce"), ObjectId("658f940e8dac260ae7b17fd0")]
 ```
 
-There is also ***convertId**  
+There is also ***convertId**   
 Before:
 ```json
 {
@@ -271,4 +307,50 @@ Before:
 After:
 ```js
 ObjectId("658f94018dac260ae7b17fce")
+```
+
+***expandIds**:  
+expandIds takes in a list of raw ObjectId strings and transforms it into a list of documents queried from a collection. This is extremely useful when you have embeddings. Let's say you are trying to create a trainer and want to assign it some pokemon. You plan on embedding the pokemon data within the trainer. Unless you have access to the entire pokemon objects, you (as the user) would have to first query the pokemon and then pass them into the call to create a trainer. Instead, you can just write that logic with this simple JSON object here to make the API call simpler for the user.  
+Before:
+```JSON
+{
+   "*expandIds": {
+     "ids": ["65915e9052657d4814a173c4", "65915e9f52657d4814a173c7"],
+     "from": "pokemon"
+   }
+}
+```
+After:
+```js
+[
+    {
+        "_id": "65915e9052657d4814a173c4",
+        "name": "vaporeon",
+        "happiness": 100
+    },
+    {
+        "_id": "65915e9f52657d4814a173c7",
+        "name": "squirtle",
+        "happiness": 100
+    }
+]
+```
+
+There is also ***expandId**   
+Before:
+```JSON
+{
+   "*expandId": {
+     "id": "65915e9052657d4814a173c4",
+     "from": "pokemon"
+   }
+}
+```
+After:
+```js
+ {
+     "_id": "65915e9052657d4814a173c4",
+     "name": "vaporeon",
+     "happiness": 100
+ }
 ```

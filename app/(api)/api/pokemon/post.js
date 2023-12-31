@@ -1,23 +1,31 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 
-import dbConnect from '@utils/db/mongoClient';
+import { getDatabase } from '@utils/mongodb/mongoClient';
+import isBodyEmpty from '@utils/request/isBodyEmpty';
+import NoContentError from '@utils/response/NoContentError';
+import parseAndReplace from '@utils/request/parseAndReplace';
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    body.trainer_id = new ObjectId(body.trainer_id);
+    if (isBodyEmpty(body)) {
+      throw new NoContentError();
+    }
+    const parsedBody = await parseAndReplace(body);
 
-    const client = await dbConnect();
-    const db = client.db();
+    const db = await getDatabase();
+    const creationStatus = await db.collection('pokemon').insertOne(parsedBody);
 
-    const playlist = await db.collection('pokemon').insertOne(body);
+    const pokemon = await db.collection('pokemon').findOne({
+      _id: new ObjectId(creationStatus.insertedId),
+    });
 
-    return NextResponse.json({ ok: true, body: playlist }, { status: 201 });
+    return NextResponse.json({ ok: true, body: pokemon }, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { ok: false, error: error.message },
-      { status: 400 }
+      { status: error.status || 400 }
     );
   }
 }

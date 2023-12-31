@@ -1,22 +1,28 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 
-import dbConnect from '@utils/mongodb/mongoClient';
-import { prependAllAttributes } from '@utils/mongodb/prependAttributes';
+import { getDatabase } from '@utils/mongodb/mongoClient';
+import { prependAllAttributes } from '@utils/request/prependAttributes';
 import NotFoundError from '@utils/response/NotFoundError';
+import isBodyEmpty from '@utils/request/isBodyEmpty';
+import NoContentError from '@utils/response/NoContentError';
+import parseAndReplace from '@utils/request/parseAndReplace';
 
 export async function PUT(request, { params }) {
   try {
-    const body = await request.json();
     const id = new ObjectId(params.id);
-    const client = await dbConnect();
-    const db = client.db();
+    const body = await request.json();
+    if (isBodyEmpty(body)) {
+      throw new NoContentError();
+    }
+    const parsedBody = await parseAndReplace(body);
 
+    const db = await getDatabase();
     const pokemon = await db.collection('pokemon').updateOne(
       {
         _id: id,
       },
-      body
+      parsedBody
     );
 
     const subDocumentUpdate = prependAllAttributes(body, 'pokemon.$[pokemon].');
@@ -37,7 +43,7 @@ export async function PUT(request, { params }) {
   } catch (error) {
     return NextResponse.json(
       { ok: false, error: error.message },
-      { status: 400 }
+      { status: error.status || 400 }
     );
   }
 }

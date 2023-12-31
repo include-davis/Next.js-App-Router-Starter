@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 
-import dbConnect from '@utils/mongodb/mongoClient';
+import { getDatabase } from '@utils/mongodb/mongoClient';
 
 export async function GET(_, { params }) {
   try {
     const id = new ObjectId(params.id);
-    const client = await dbConnect();
-    const db = client.db();
+    const db = await getDatabase();
 
     const trainer = await db.collection('trainers').findOne({ _id: id });
 

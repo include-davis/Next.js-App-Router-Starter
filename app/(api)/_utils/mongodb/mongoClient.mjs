@@ -1,9 +1,9 @@
-const { MongoClient } = require('mongodb');
+import { MongoClient } from 'mongodb';
 
 const uri = `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_DB_HOST}`;
 let cachedClient = null;
 
-async function getClient() {
+export async function getClient() {
   if (cachedClient) {
     return cachedClient;
   }
@@ -12,9 +12,7 @@ async function getClient() {
   return cachedClient;
 }
 
-async function getDatabase() {
+export async function getDatabase() {
   const client = await getClient();
   return client.db();
 }
-
-module.exports = { getClient, getDatabase };

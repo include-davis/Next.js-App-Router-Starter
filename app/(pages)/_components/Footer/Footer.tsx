@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import styles from './Footer.module.scss';
 
-export default function Footer({ navLinks }) {
+interface NavLink {
+  name: string;
+  slug: string;
+}
+
+export default function Footer({ navLinks }: { navLinks: NavLink[] }) {
   return (
     <div className={styles.container}>
       <div className={styles.content_container}>

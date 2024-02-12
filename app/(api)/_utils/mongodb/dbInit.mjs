@@ -1,6 +1,6 @@
-const { getClient } = require('./mongoClient.js');
-const readline = require('readline');
-const collections = require('../../_data/collections.json');
+import { getClient } from './mongoClient.mjs';
+import readline from 'readline';
+import collections from '../../_data/collections.json' with { type: 'json' };
 
 const rl = readline.createInterface({
   input: process.stdin,

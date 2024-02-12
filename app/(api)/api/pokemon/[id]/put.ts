@@ -1,14 +1,20 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 
-import { getDatabase } from '@utils/mongodb/mongoClient';
+import { getDatabase } from '@utils/mongodb/mongoClient.mjs';
 import { prependAllAttributes } from '@utils/request/prependAttributes';
-import NotFoundError from '@utils/response/NotFoundError';
 import isBodyEmpty from '@utils/request/isBodyEmpty';
-import NoContentError from '@utils/response/NoContentError';
 import parseAndReplace from '@utils/request/parseAndReplace';
+import {
+  HttpError,
+  NoContentError,
+  NotFoundError,
+} from '@utils/response/Errors';
 
-export async function PUT(request, { params }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const id = new ObjectId(params.id);
     const body = await request.json();
@@ -40,7 +46,8 @@ export async function PUT(request, { params }) {
       { ok: true, body: [pokemon, trainer_pokemon] },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (e) {
+    const error = e as HttpError;
     return NextResponse.json(
       { ok: false, error: error.message },
       { status: error.status || 400 }

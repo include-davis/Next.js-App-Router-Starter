@@ -1,10 +1,14 @@
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
 
-import { getDatabase } from '@utils/mongodb/mongoClient';
+import { getDatabase } from '@utils/mongodb/mongoClient.mjs';
 import NotFoundError from '@utils/response/NotFoundError';
+import { HttpError } from '@utils/response/Errors';
 
-export async function GET(_, { params }) {
+export async function GET(
+  _: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const id = new ObjectId(params.id);
     const db = await getDatabase();
@@ -18,7 +22,8 @@ export async function GET(_, { params }) {
     }
 
     return NextResponse.json({ ok: true, body: pokemon }, { status: 200 });
-  } catch (error) {
+  } catch (e) {
+    const error = e as HttpError;
     return NextResponse.json(
       { ok: false, error: error.message },
       { status: error.status || 400 }

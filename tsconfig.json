@@ -24,7 +24,8 @@
     "@components/*": ["./app/(pages)/_components/*"],
     "@data/*": ["./app/(pages)/_data/*"],
     "@hooks/*": ["./app/(pages)/_hooks/*"],
-    "@utils/*": ["./app/(api)/_utils/*"],      
+    "@utils/*": ["./app/(api)/_utils/*"],   
+    "@actions/*": ["./app/(api)/_actions/*"],
     }
   },
   "include": ["nextEnv.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

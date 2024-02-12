@@ -1,6 +1,8 @@
 import styles from './PokemonCard.module.scss';
-import { UpdatePokemon } from '@actions/pokemon/pokemon';
-export default function PokemonCard({ pokemon }) {
+import { UpdatePokemon } from '@actions/pokemon/UpdatePokemon';
+import type Pokemon from '@datatypes/Pokemon';
+
+export default function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
   const UpdatePokemonWithId = UpdatePokemon.bind(null, pokemon._id);
   return (
     <div className={styles.container}>

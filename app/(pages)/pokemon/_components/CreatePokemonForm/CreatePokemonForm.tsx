@@ -1,6 +1,6 @@
 import styles from './CreatePokemonForm.module.scss';
 
-import { CreatePokemon } from '@actions/pokemon/pokemon';
+import { CreatePokemon } from '@actions/pokemon/CreatePokemon';
 export default function CreatePokemonForm() {
   return (
     <div className={styles.form_container}>

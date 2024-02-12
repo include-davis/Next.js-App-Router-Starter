@@ -28,6 +28,7 @@
     "@utils/*": ["./app/(api)/_utils/*"],   
     "@actions/*": ["./app/(api)/_actions/*"],
     "@schema/*": ["./app/(api)/_schema/*"],
+    "@datatypes/*": ["./app/(api)/_types/*"]
     }
   },
   "include": ["nextEnv.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/(api)/_schema/Trainer.mjs", "app/(api)/_schema/Pokemon.mjs", "app/(api)/_schema/index.mjs"],

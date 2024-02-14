@@ -1,8 +1,9 @@
-import styles from './PokemonCard.module.scss';
-import { UpdateUser } from '@actions/playlists/UpdateUsers';
+import styles from './UserCard.module.scss';
+import { UpdateUser } from '@actions/users/UpdateUsers';
+import type User from '@datatypes/User';
 
 export default function PokemonCard({ user }: { user: User }) {
-  const UpdatePokemonWithId = UpdateUser.bind(null, user._id);
+  const UpdatePokemonWithId = UpdateUser.bind(null, user.id);
   return (
     <div className={styles.container}>
       <h3 className={styles.subtitle}>USERNAME</h3>

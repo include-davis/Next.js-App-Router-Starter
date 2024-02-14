@@ -1,14 +1,14 @@
 import styles from './page.module.scss';
 
-import CreatePokemonForm from './_components/CreatePokemonForm/CreatePokemonForm';
-import PokemonList from './_components/PokemonList/PokemonList';
+import UsersList from './_components/UsersList/UsersList';
+import CreateUserForm from './_components/CreateUsersForm/CreateUsersForm';
 
-export default function Pokemon() {
+export default function User() {
   return (
     <div className={styles.body}>
       <h1>Test out some of our APIs</h1>
-      <CreatePokemonForm />
-      <PokemonList />
+      <CreateUserForm />
+      <UsersList />
     </div>
   );
 }

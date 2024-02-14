@@ -6,24 +6,23 @@ import FormToJSON from '@utils/form/FormToJSON';
 
 import { gql } from '@apollo/client';
 
-const createUserMutation = gql`
-  mutation CreatePlaylist($userId: ID!, $input: PlaylistInput!) {
-    createPlaylist(userId: $userId, input: $input) {
+const updateUserMutation = gql`
+  mutation UpdateUser($updateUserId: ID!, $input: UserInput!) {
+    updateUser(id: $updateUserId, input: $input) {
       id
       name
-      user {
-        id
-        name
-      }
     }
   }
 `;
 
-export async function CreateUser(formData: FormData) {
+export async function UpdateUser(id: string, formData: FormData) {
   const dataJSON = FormToJSON(formData);
   await getClient().mutate({
-    mutation: createUserMutation,
-    variables: dataJSON,
+    mutation: updateUserMutation,
+    variables: {
+      updateUserId: id,
+      input: dataJSON,
+    },
   });
   revalidatePath('/users');
 }

@@ -4,16 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { getClient } from '@utils/apollo/ApolloClient';
 import FormToJSON from '@utils/form/FormToJSON';
 
-import { gql } from '@apollo/client';
-
-const updateUserMutation = gql`
-  mutation UpdateUser($updateUserId: ID!, $input: UserInput!) {
-    updateUser(id: $updateUserId, input: $input) {
-      id
-      name
-    }
-  }
-`;
+import { updateUserMutation } from '@graphql/mutations/updateUser';
 
 export async function UpdateUser(id: string, formData: FormData) {
   const dataJSON = FormToJSON(formData);
